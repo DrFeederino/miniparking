@@ -1,6 +1,7 @@
 package ru.epam.miniparking.domain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -14,12 +15,9 @@ import ru.epam.miniparking.exception.MiniparkingException;
 import javax.servlet.http.HttpServletRequest;
 
 @Component
+@AllArgsConstructor
 public class CustomArgumentResolver implements HandlerMethodArgumentResolver {
     private final ObjectMapper mapper;
-
-    public CustomArgumentResolver(ObjectMapper mapper) {
-        this.mapper = mapper;
-    }
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -30,7 +28,7 @@ public class CustomArgumentResolver implements HandlerMethodArgumentResolver {
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
         String url = request.getRequestURI();
-        BaseDto dto = null;
+        BaseDto dto;
 
         switch (url) {
             case "/drivers":

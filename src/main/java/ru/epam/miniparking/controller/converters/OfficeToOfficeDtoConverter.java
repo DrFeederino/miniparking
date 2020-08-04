@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 
 @Component
 public class OfficeToOfficeDtoConverter extends AbstractConverter<Office, OfficeDTO> {
-
     @Override
     protected OfficeDTO convert(Office office) {
         return new OfficeDTO(

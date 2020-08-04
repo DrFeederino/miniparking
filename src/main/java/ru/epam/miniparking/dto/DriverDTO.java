@@ -3,11 +3,13 @@ package ru.epam.miniparking.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.NotNull;
 
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
+@Getter
 public final class DriverDTO extends BaseDto {
     @NotNull
     private String name;
@@ -26,24 +28,5 @@ public final class DriverDTO extends BaseDto {
         this.email = email;
         this.officeId = officeId;
         this.spotId = spotId;
-    }
-
-    @Nullable
-    public String getName() {
-        return name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    @Nullable
-    public Long getOfficeId() {
-        return officeId;
-    }
-
-    @Nullable
-    public Long getSpotId() {
-        return spotId;
     }
 }

@@ -1,13 +1,17 @@
 package ru.epam.miniparking.domain;
 
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 
 @Entity
 @Table(name = "drivers")
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
+@Getter
+@Setter
 public class Driver extends BaseEntity {
     @Column(nullable = false)
     private String name;
@@ -20,36 +24,4 @@ public class Driver extends BaseEntity {
     @OneToOne
     @JoinColumn(name = "spot_id", referencedColumnName = "id")
     private Spot spot;
-    
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public Office getOffice() {
-        return office;
-    }
-
-    public void setOffice(Office office) {
-        this.office = office;
-    }
-
-    public Spot getSpot() {
-        return spot;
-    }
-
-    public void setSpot(Spot spot) {
-        this.spot = spot;
-    }
 }

@@ -2,6 +2,7 @@ package ru.epam.miniparking.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.web.bind.annotation.*;
 import ru.epam.miniparking.domain.Location;
@@ -9,24 +10,18 @@ import ru.epam.miniparking.domain.NonIdentifiable;
 import ru.epam.miniparking.dto.LocationDTO;
 import ru.epam.miniparking.service.LocationService;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Api
-@Transactional
 @RestController
 @RequestMapping("/locations")
 @CrossOrigin("http://localhost:3000")
+@AllArgsConstructor
 public class LocationController {
     private final LocationService locationSevice;
 
     private final ModelMapper mapper;
-
-    public LocationController(LocationService locationSevice, ModelMapper mapper) {
-        this.locationSevice = locationSevice;
-        this.mapper = mapper;
-    }
 
     @ApiOperation("Returns all locations")
     @GetMapping

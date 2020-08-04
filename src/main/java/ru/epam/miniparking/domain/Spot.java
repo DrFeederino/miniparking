@@ -1,12 +1,18 @@
 package ru.epam.miniparking.domain;
 
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "spots")
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
+@Getter
+@Setter
+@NoArgsConstructor
 public class Spot extends BaseEntity {
     @Column(nullable = false)
     private String spotTitle;
@@ -16,43 +22,12 @@ public class Spot extends BaseEntity {
     @OneToOne(mappedBy = "spot")
     private Driver driver;
 
-    public Spot() {
-    }
-
     public Spot(String spotTitle, Location location) {
         this.spotTitle = spotTitle;
         this.location = location;
     }
 
-    public String getSpotTitle() {
-        return spotTitle;
-    }
-
-    public void setSpotTitle(String spotTitle) {
-        this.spotTitle = spotTitle;
-    }
-
     public boolean isAvailable() {
         return driver == null;
-    }
-
-    public boolean isNotAvailable() {
-        return !isAvailable();
-    }
-
-    public Location getLocation() {
-        return location;
-    }
-
-    public void setLocation(Location location) {
-        this.location = location;
-    }
-
-    public Driver getDriver() {
-        return driver;
-    }
-
-    public void setDriver(Driver driver) {
-        this.driver = driver;
     }
 }

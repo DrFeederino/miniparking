@@ -2,6 +2,7 @@ package ru.epam.miniparking.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.web.bind.annotation.*;
 import ru.epam.miniparking.domain.Driver;
@@ -9,29 +10,24 @@ import ru.epam.miniparking.domain.NonIdentifiable;
 import ru.epam.miniparking.dto.DriverDTO;
 import ru.epam.miniparking.service.DriverService;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Api
-@Transactional
 @RestController
 @RequestMapping("/drivers")
 @CrossOrigin("http://localhost:3000")
+@AllArgsConstructor
 public class DriverController {
     private final DriverService driverService;
 
     private final ModelMapper mapper;
 
-    public DriverController(DriverService driverService, ModelMapper mapper) {
-        this.driverService = driverService;
-        this.mapper = mapper;
-    }
-
     @ApiOperation("Returns all drivers")
     @GetMapping
     public List<DriverDTO> getAllDrivers() {
-        return driverService.findAll().stream()
+        return driverService.findAll()
+                .stream()
                 .map(m -> mapper.map(m, DriverDTO.class))
                 .collect(Collectors.toList());
     }
@@ -45,7 +41,8 @@ public class DriverController {
     @ApiOperation("Returns drivers by name")
     @GetMapping(params = {"name"})
     public List<DriverDTO> getByName(@RequestParam String name) {
-        return driverService.findByName(name).stream()
+        return driverService.findByName(name)
+                .stream()
                 .map(m -> mapper.map(m, DriverDTO.class))
                 .collect(Collectors.toList());
     }

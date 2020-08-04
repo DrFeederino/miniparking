@@ -2,12 +2,14 @@ package ru.epam.miniparking.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
+@Getter
 public final class OfficeDTO extends BaseDto {
     @NotNull
     private String officeTitle;
@@ -24,19 +26,5 @@ public final class OfficeDTO extends BaseDto {
         this.officeTitle = officeTitle;
         this.locationIds = locationIds;
         this.driverIds = driverIds;
-    }
-
-    public String getOfficeTitle() {
-        return officeTitle;
-    }
-
-    @Nullable
-    public List<Long> getLocationIds() {
-        return locationIds;
-    }
-
-    @Nullable
-    public List<Long> getDriverIds() {
-        return driverIds;
     }
 }

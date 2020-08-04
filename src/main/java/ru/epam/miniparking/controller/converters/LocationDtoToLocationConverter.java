@@ -1,5 +1,6 @@
 package ru.epam.miniparking.controller.converters;
 
+import lombok.AllArgsConstructor;
 import org.modelmapper.AbstractConverter;
 import org.springframework.stereotype.Component;
 import ru.epam.miniparking.domain.Location;
@@ -8,15 +9,11 @@ import ru.epam.miniparking.service.OfficeService;
 import ru.epam.miniparking.service.SpotService;
 
 @Component
+@AllArgsConstructor
 public class LocationDtoToLocationConverter extends AbstractConverter<LocationDTO, Location> {
     private final OfficeService officeService;
 
     private final SpotService spotService;
-
-    public LocationDtoToLocationConverter(OfficeService officeService, SpotService spotService) {
-        this.officeService = officeService;
-        this.spotService = spotService;
-    }
 
     @Override
     protected Location convert(LocationDTO locationDTO) {

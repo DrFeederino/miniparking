@@ -16,7 +16,11 @@ public class LocationToLocationDtoConverter extends AbstractConverter<Location, 
                 location.getId(),
                 location.getLocationTitle(),
                 location.getSpots() != null ?
-                        location.getSpots().stream().map(BaseEntity::getId).collect(Collectors.toList()) : null,
+                        location.getSpots()
+                                .stream()
+                                .map(BaseEntity::getId)
+                                .collect(Collectors.toList())
+                        : null,
                 location.getOffice() != null ? location.getOffice().getId() : null,
                 location.getCapacity());
     }

@@ -1,6 +1,8 @@
 package ru.epam.miniparking.domain;
 
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
@@ -8,7 +10,9 @@ import java.util.List;
 
 @Entity
 @Table(name = "locations")
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
+@Getter
+@Setter
 public class Location extends BaseEntity {
     @Column(nullable = false)
     private String locationTitle;
@@ -20,36 +24,4 @@ public class Location extends BaseEntity {
     @Min(1)
     @Column(nullable = false)
     private long capacity;
-
-    public String getLocationTitle() {
-        return locationTitle;
-    }
-
-    public void setLocationTitle(String title) {
-        this.locationTitle = title;
-    }
-
-    public List<Spot> getSpots() {
-        return spots;
-    }
-
-    public void setSpots(List<Spot> spots) {
-        this.spots = spots;
-    }
-
-    public Office getOffice() {
-        return office;
-    }
-
-    public void setOffice(Office office) {
-        this.office = office;
-    }
-
-    public long getCapacity() {
-        return capacity;
-    }
-
-    public void setCapacity(long capacity) {
-        this.capacity = capacity;
-    }
 }

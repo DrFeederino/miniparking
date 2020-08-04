@@ -1,5 +1,6 @@
 package ru.epam.miniparking.service;
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.epam.miniparking.domain.Driver;
 import ru.epam.miniparking.domain.Location;
@@ -10,21 +11,16 @@ import ru.epam.miniparking.repo.LocationRepo;
 
 import javax.transaction.Transactional;
 import javax.transaction.Transactional.TxType;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
+@AllArgsConstructor
 public class LocationService {
     private final LocationRepo locationRepo;
     private final OfficeService officeService;
     private final DriverRepo driverRepo;
-
-    public LocationService(LocationRepo locationRepo, OfficeService officeService, DriverRepo driverRepo) {
-        this.locationRepo = locationRepo;
-        this.officeService = officeService;
-        this.driverRepo = driverRepo;
-    }
 
     public List<Location> findAll() {
         return locationRepo.findAll();
@@ -89,7 +85,7 @@ public class LocationService {
                 .map(Spot::getDriver)
                 .collect(Collectors.toList());
 
-        driversToTransfer.stream().forEach(d -> {
+        driversToTransfer.forEach(d -> {
             if (availableSpots.isEmpty()) {
                 return;
             }

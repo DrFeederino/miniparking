@@ -1,5 +1,6 @@
 package ru.epam.miniparking.service;
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.epam.miniparking.domain.Location;
 import ru.epam.miniparking.domain.Spot;
@@ -7,22 +8,25 @@ import ru.epam.miniparking.exception.ConflictException;
 import ru.epam.miniparking.exception.NotFoundException;
 import ru.epam.miniparking.repo.SpotRepo;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
+@AllArgsConstructor
 public class SpotService {
     private final SpotRepo spotRepo;
 
     private final LocationService locationSevice;
 
-    public SpotService(SpotRepo spotRepo, LocationService locationSevice) {
-        this.spotRepo = spotRepo;
-        this.locationSevice = locationSevice;
-    }
+    private static final String NO_CAPACITY_LEFT = "No capacity left for location '%s";
+    private static final String SPOT_EXISTS = "Spot with name '%s' already exist";
+    private static final String SPOTS_EXIST = "Spots with such names are already exists";
+    private static final String CAPACITY_EXCEEDED = "Capacity is over";
 
     public static boolean capacityIsExceeded(long exist, long need) {
         return exist < need;
@@ -30,13 +34,13 @@ public class SpotService {
 
     public Spot save(Spot newSpot) {
         if (spotTitleExists(newSpot)) {
-            throw new ConflictException(String.format("Spot with name '%s' already exist", newSpot.getSpotTitle()));
+            throw new ConflictException(String.format(SPOT_EXISTS, newSpot.getSpotTitle()));
         } else if (
                 capacityIsExceeded(
                         newSpot.getLocation().getCapacity() - newSpot.getLocation().getSpots().size(),
                         1)
         ) {
-            throw new ConflictException(String.format("No capacity left for location '%s", newSpot.getLocation().getLocationTitle()));
+            throw new ConflictException(String.format(NO_CAPACITY_LEFT, newSpot.getLocation().getLocationTitle()));
         }
         return spotRepo.save(newSpot);
     }
@@ -52,19 +56,16 @@ public class SpotService {
 
     private boolean spotTitleExists(Spot newSpot) {
         Location location = locationSevice.findById(newSpot.getLocation().getId());
-        List<Spot> locationSpots = location.getSpots();
-        for (Spot spot : locationSpots) {
-            if (Objects.equals(spot.getSpotTitle(), newSpot.getSpotTitle())) {
-                return true;
-            }
-        }
+        Set<String> locationSpots = location.getSpots()
+                .stream()
+                .map(Spot::getSpotTitle)
+                .collect(Collectors.toSet());
 
-        return false;
+        return locationSpots.contains(newSpot.getSpotTitle());
     }
 
     public Spot findBySpotId(Long id) {
-        return spotRepo.findById(id).orElseThrow(() ->
-                new NotFoundException(Spot.class.getSimpleName(), id));
+        return spotRepo.findById(id).orElseThrow(() -> new NotFoundException(Spot.class.getSimpleName(), id));
     }
 
     public List<Spot> findBySpotTitle(String title) {
@@ -86,6 +87,9 @@ public class SpotService {
 
     public void deleteById(Long id) {
         Optional<Spot> s = spotRepo.findById(id);
+        if (!s.isPresent()) {
+            throw new NotFoundException(Spot.class.getSimpleName(), id);
+        }
         s.ifPresent(spot -> {
             if (spot.getDriver() != null) {
                 List<Spot> availableSpots = findAvailable();
@@ -93,16 +97,14 @@ public class SpotService {
                     spot.getDriver().setSpot(null);
                 } else {
                     availableSpots.forEach(spt -> {
-                        if (spt.getLocation().getOffice().equals(spot.getLocation().getOffice())){
+                        if (spt.getLocation().getOffice().equals(spot.getLocation().getOffice())) {
                             spot.getDriver().setSpot(spt);
                         }
                     });
                 }
             }
+            spotRepo.deleteById(id);
         });
-        s.orElseThrow(() -> new NotFoundException(Spot.class.getSimpleName(), id));
-
-        spotRepo.deleteById(id);
     }
 
     public List<Spot> findBySpotTitleAndLocation(List<String> newSpots, Location location) {
@@ -128,14 +130,14 @@ public class SpotService {
         Location location = locationSevice.findById(locationId);
 
         if (!findBySpotTitleAndLocation(newSpotsNames, location).isEmpty()) {
-            throw new ConflictException("Spots with such names are already exists");
+            throw new ConflictException(SPOTS_EXIST);
         } else if (
                 capacityIsExceeded(
                         location.getCapacity() - location.getSpots().size(),
                         newSpotsNames.size()
                 )
         ) {
-            throw new ConflictException("Capacity is over");
+            throw new ConflictException(CAPACITY_EXCEEDED);
         }
 
         List<Spot> newSpots = newSpotsNames.stream()

@@ -2,6 +2,7 @@ package ru.epam.miniparking.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.web.bind.annotation.*;
 import ru.epam.miniparking.domain.NonIdentifiable;
@@ -9,29 +10,24 @@ import ru.epam.miniparking.domain.Office;
 import ru.epam.miniparking.dto.OfficeDTO;
 import ru.epam.miniparking.service.OfficeService;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Api
-@Transactional
 @RestController
 @RequestMapping("/offices")
 @CrossOrigin("http://localhost:3000")
+@AllArgsConstructor
 public class OfficeController {
     private final OfficeService officeService;
 
     private final ModelMapper mapper;
 
-    public OfficeController(OfficeService officeService, ModelMapper mapper) {
-        this.officeService = officeService;
-        this.mapper = mapper;
-    }
-
     @ApiOperation("Returns all offices")
     @GetMapping
     public List<OfficeDTO> getAll() {
-        return officeService.findAll().stream()
+        return officeService.findAll()
+                .stream()
                 .map(m -> mapper.map(m, OfficeDTO.class))
                 .collect(Collectors.toList());
     }

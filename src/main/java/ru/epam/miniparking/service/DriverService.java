@@ -1,20 +1,20 @@
 package ru.epam.miniparking.service;
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.epam.miniparking.domain.Driver;
 import ru.epam.miniparking.exception.NotFoundException;
 import ru.epam.miniparking.repo.DriverRepo;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
+@AllArgsConstructor
 public class DriverService {
     private final DriverRepo driverRepo;
-
-    public DriverService(DriverRepo driverRepo) {
-        this.driverRepo = driverRepo;
-    }
 
     public List<Driver> findAll() {
         return driverRepo.findAll();
@@ -48,13 +48,14 @@ public class DriverService {
 
     public void deleteById(long id) {
         Optional<Driver> d = driverRepo.findById(id);
+        if (!d.isPresent()) {
+            throw new NotFoundException(Driver.class.getSimpleName(), id);
+        }
         d.ifPresent(driver -> {
             if (driver.getSpot() != null) {
                 driver.getSpot().setDriver(null);
             }
+            driverRepo.deleteById(id);
         });
-        d.orElseThrow(() -> new NotFoundException(Driver.class.getSimpleName(), id));
-
-        driverRepo.deleteById(id);
     }
 }

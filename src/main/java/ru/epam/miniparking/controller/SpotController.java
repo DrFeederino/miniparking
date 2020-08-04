@@ -2,6 +2,7 @@ package ru.epam.miniparking.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -15,24 +16,20 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Api
-@Transactional
 @RestController
 @RequestMapping("/spots")
 @CrossOrigin("http://localhost:3000")
+@AllArgsConstructor
 public class SpotController {
     private final SpotService spotService;
 
     private final ModelMapper mapper;
 
-    public SpotController(SpotService spotService, ModelMapper mapper) {
-        this.spotService = spotService;
-        this.mapper = mapper;
-    }
-
     @ApiOperation("Returns all spots")
     @GetMapping
     public List<SpotDTO> getAll() {
-        return spotService.findAll().stream()
+        return spotService.findAll()
+                .stream()
                 .map(m -> mapper.map(m, SpotDTO.class))
                 .collect(Collectors.toList());
     }
