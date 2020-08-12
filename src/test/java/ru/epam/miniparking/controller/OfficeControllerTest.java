@@ -27,7 +27,7 @@ class OfficeControllerTest extends IntegrationTest {
     MockMvc mockMvc;
 
     @Test
-    public void createNewOffice() throws Exception {
+    void createNewOffice() throws Exception {
 
         OfficeDTO expectedResult = new OfficeDTO(3L, "thirdOffice", new ArrayList<>(), new ArrayList<>());
 
@@ -43,7 +43,7 @@ class OfficeControllerTest extends IntegrationTest {
     }
 
     @Test
-    public void findAll() throws Exception {
+    void findAll() throws Exception {
         MvcResult response = mockMvc.perform(MockMvcRequestBuilders.get("/offices")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
@@ -53,7 +53,7 @@ class OfficeControllerTest extends IntegrationTest {
     }
 
     @Test
-    public void findOfficeById() throws Exception {
+    void findOfficeById() throws Exception {
         OfficeDTO expectedResult = getExpectedResult();
 
         MvcResult response = mockMvc.perform(MockMvcRequestBuilders.get("/offices/1")
@@ -66,7 +66,7 @@ class OfficeControllerTest extends IntegrationTest {
     }
 
     @Test
-    public void findOfficeByTitle() throws Exception {
+    void findOfficeByTitle() throws Exception {
         OfficeDTO expectedResult = getExpectedResult();
 
         MvcResult response = mockMvc.perform(MockMvcRequestBuilders.get("/offices")
@@ -81,9 +81,8 @@ class OfficeControllerTest extends IntegrationTest {
     }
 
 
-
     @Test
-    public void update() throws Exception {
+    void update() throws Exception {
         OfficeDTO expectedResult = new OfficeDTO(1L, "updated", new ArrayList<>(), new ArrayList<>());
 
         MvcResult response = mockMvc.perform(MockMvcRequestBuilders.put("/offices/1")
@@ -93,11 +92,11 @@ class OfficeControllerTest extends IntegrationTest {
 
         OfficeDTO result = jsonStringToEntity(response.getResponse().getContentAsString(), OFFICE_DTO);
         assertThat(response.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
-        assertThat(result).isEqualTo(expectedResult);
+        assertThat(result).isEqualToComparingFieldByField(expectedResult);
     }
 
     @Test
-    public void delete() throws Exception {
+    void delete() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete("/offices/1")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());

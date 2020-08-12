@@ -55,7 +55,7 @@ public class DriverService {
             if (driver.getSpot() != null) {
                 driver.getSpot().setDriver(null);
             }
-            driverRepo.deleteById(id);
         });
+        driverRepo.deleteById(id);
     }
 }

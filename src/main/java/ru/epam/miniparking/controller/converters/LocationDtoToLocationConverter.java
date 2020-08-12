@@ -4,9 +4,14 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.AbstractConverter;
 import org.springframework.stereotype.Component;
 import ru.epam.miniparking.domain.Location;
+import ru.epam.miniparking.dto.BaseDto;
 import ru.epam.miniparking.dto.LocationDTO;
 import ru.epam.miniparking.service.OfficeService;
 import ru.epam.miniparking.service.SpotService;
+
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 @Component
 @AllArgsConstructor
@@ -24,8 +29,9 @@ public class LocationDtoToLocationConverter extends AbstractConverter<LocationDT
         if (locationDTO.getOfficeId() != null) {
             location.setOffice(officeService.findById(locationDTO.getOfficeId()));
         }
-        if (locationDTO.getSpotIds() != null) {
-            location.setSpots(spotService.findAllById(locationDTO.getSpotIds()));
+        if (locationDTO.getSpots() != null) {
+            List<Long> ids = locationDTO.getSpots().stream().map(BaseDto::getId).collect(toList());
+            location.setSpots(spotService.findAllById(ids));
         }
 
         return location;

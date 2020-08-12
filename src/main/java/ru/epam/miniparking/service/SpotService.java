@@ -103,15 +103,14 @@ public class SpotService {
                     });
                 }
             }
-            spotRepo.deleteById(id);
         });
+        spotRepo.deleteById(id);
     }
 
     public List<Spot> findBySpotTitleAndLocation(List<String> newSpots, Location location) {
         List<Spot> spots = new ArrayList<>();
         for (String spot : newSpots) {
             spotRepo.findBySpotTitleAndLocation(spot, location).ifPresent(spots::add);
-
         }
 
         return spots;

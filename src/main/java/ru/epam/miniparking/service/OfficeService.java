@@ -45,8 +45,8 @@ public class OfficeService {
         o.ifPresent(office -> office.getDrivers().forEach(d -> {
             d.setSpot(null);
             d.setOffice(null);
-            officeRepo.deleteById(id);
         }));
+        officeRepo.deleteById(id);
     }
 
     public List<Office> findAll() {

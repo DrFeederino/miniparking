@@ -10,12 +10,14 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.epam.miniparking.dto.LocationDTO;
+import ru.epam.miniparking.dto.SpotDTO;
 import ru.epam.miniparking.exception.ErrorInfo;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class LocationControllerTest extends IntegrationTest{
     private static final TypeReference<LocationDTO> LOCATION_DTO = new TypeReference<LocationDTO>() {
@@ -27,14 +29,12 @@ class LocationControllerTest extends IntegrationTest{
     MockMvc mockMvc;
 
     @Test
-    public void createNewLocation() throws Exception {
+    void createNewLocation() throws Exception {
         LocationDTO expectedResult =
-                new LocationDTO(4L, "location4", new ArrayList<>(), 1L, 100);
-
+                new LocationDTO(4L, "location4", null, 1L, 100);
         MvcResult response = mockMvc.perform(MockMvcRequestBuilders.post("/locations")
                 .content("{\"locationTitle\": \"location4\"," +
                         "\"officeId\": \"1\"," +
-                        "\"spotIds\": []," +
                         "\"capacity\": \"100\"}")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
@@ -46,7 +46,7 @@ class LocationControllerTest extends IntegrationTest{
     }
 
     @Test
-    public void findAll() throws Exception {
+    void findAll() throws Exception {
         MvcResult response = mockMvc.perform(MockMvcRequestBuilders.get("/locations")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
@@ -56,7 +56,7 @@ class LocationControllerTest extends IntegrationTest{
     }
 
     @Test
-    public void findOfficeById() throws Exception {
+    void findOfficeById() throws Exception {
         LocationDTO expectedResult = getExpectedResult();
 
         MvcResult response = mockMvc.perform(MockMvcRequestBuilders.get("/locations/2")
@@ -69,7 +69,7 @@ class LocationControllerTest extends IntegrationTest{
     }
 
     @Test
-    public void findOfficeByTitle() throws Exception {
+    void findOfficeByTitle() throws Exception {
         LocationDTO expectedResult = getExpectedResult();
 
         MvcResult response = mockMvc.perform(MockMvcRequestBuilders.get("/locations")
@@ -84,31 +84,24 @@ class LocationControllerTest extends IntegrationTest{
     }
 
 
-
     @Test
-    public void update() throws Exception {
-        List<Long> spotIds = new ArrayList<>();
-        spotIds.add(5L);
-        spotIds.add(6L);
+    void update() throws Exception {
+        List<SpotDTO> spots = Collections.singletonList(new SpotDTO(1L, "1", 1L, 1L));
         LocationDTO expectedResult =
-                new LocationDTO(2L, "updated", spotIds, 1L, 50);
-
+                new LocationDTO(2L, "updated", spots, 1L, 50);
+        String body = objectMapper.writeValueAsString(expectedResult);
         MvcResult response = mockMvc.perform(MockMvcRequestBuilders.put("/locations/2")
-                .content("{\"id\": \"2\"," +
-                        "\"locationTitle\": \"updated\"," +
-                        "\"officeId\": \"1\"," +
-                        "\"spotIds\": [5, 6]," +
-                        "\"capacity\": \"50\"}")
+                .content(body)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
 
         LocationDTO result = jsonStringToEntity(response.getResponse().getContentAsString(), LOCATION_DTO);
         assertThat(response.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
-        assertThat(result).isEqualTo(expectedResult);
+        assertThat(result).isEqualToComparingFieldByField(expectedResult);
     }
 
     @Test
-    public void delete() throws Exception {
+    void delete() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete("/locations/2")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
@@ -128,11 +121,12 @@ class LocationControllerTest extends IntegrationTest{
 
     }
 
-    private LocationDTO getExpectedResult(){
-        List<Long> spotIds = new ArrayList<>();
-        spotIds.add(5L);
-        spotIds.add(6L);
-        return new LocationDTO(2L, "location2", spotIds, 1L, 50);
+    private LocationDTO getExpectedResult() {
+        List<SpotDTO> spots = Arrays.asList(
+                new SpotDTO(5L, "5", 2L, 2L),
+                new SpotDTO(6L, "6", 2L, null)
+        );
+        return new LocationDTO(2L, "location2", spots, 1L, 50);
     }
 
 

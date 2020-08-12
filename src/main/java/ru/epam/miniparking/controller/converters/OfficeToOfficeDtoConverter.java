@@ -6,6 +6,7 @@ import ru.epam.miniparking.domain.BaseEntity;
 import ru.epam.miniparking.domain.Office;
 import ru.epam.miniparking.dto.OfficeDTO;
 
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 @Component
@@ -20,12 +21,12 @@ public class OfficeToOfficeDtoConverter extends AbstractConverter<Office, Office
                                 .stream()
                                 .map(BaseEntity::getId)
                                 .collect(Collectors.toList())
-                        : null,
+                        : Collections.emptyList(),
                 office.getDrivers() != null ?
                         office.getDrivers()
                                 .stream()
                                 .map(BaseEntity::getId)
                                 .collect(Collectors.toList())
-                        : null);
+                        : Collections.emptyList());
     }
 }

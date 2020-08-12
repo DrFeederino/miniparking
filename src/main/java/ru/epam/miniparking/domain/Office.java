@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Collections;
 import java.util.List;
 
 @Entity
@@ -19,4 +20,20 @@ public class Office extends BaseEntity {
     private List<Location> locations;
     @OneToMany(mappedBy = "office")
     private List<Driver> drivers;
+
+    public List<Location> getLocations() {
+        return locations == null ? Collections.emptyList() : locations;
+    }
+
+    public void setLocations(List<Location> locations) {
+        this.locations = locations;
+    }
+
+    public List<Driver> getDrivers() {
+        return drivers == null ? Collections.emptyList() : drivers;
+    }
+
+    public void setDrivers(List<Driver> drivers) {
+        this.drivers = drivers;
+    }
 }
